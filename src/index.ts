@@ -22,6 +22,29 @@ async function defaultKey(_: Express.Request, __: Express.Multer.File) {
   return raw.toString("hex");
 }
 
+declare global {
+  namespace Express {
+    namespace MulterS3 {
+      interface File extends Multer.File {
+        acl: ObjectCannedACL;
+        bucket: string;
+        etag?: string;
+        key: string;
+        contentDisposition?: string;
+        contentEncoding?: string;
+        contentType: string;
+        location?: string;
+        metadata?: { [key: string]: string };
+        serverSideEncryption?: ServerSideEncryption;
+        size: number;
+        storageClass?: StorageClass;
+        tagging?: string;
+        versionId?: string;
+      }
+    }
+  }
+}
+
 // Allows for a static, awaitable, or callback option
 type Option<T> = T | OptionAwaitable<T> | OptionCallback<T>;
 type OptionAwaitable<T> = (
@@ -199,6 +222,7 @@ class S3Storage {
         metadata?: { [key: string]: string };
         serverSideEncryption?: ServerSideEncryption;
         storageClass?: StorageClass;
+        tagging?: string;
         versionId?: string;
       }
     ) => void
@@ -248,6 +272,7 @@ class S3Storage {
         serverSideEncryption: opts.serverSideEncryption,
         size: currentSize,
         storageClass: opts.storageClass,
+        tagging: opts.tagging,
         versionId: result.VersionId,
       });
     } catch (error) {
