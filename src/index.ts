@@ -8,7 +8,6 @@ import {
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { randomBytes } from "crypto";
-import { fileTypeFromBuffer } from "file-type";
 import htmlCommentRegex from "html-comment-regex";
 import stream, { Readable } from "stream";
 import { promisify } from "util";
@@ -341,6 +340,8 @@ function autoContentType(
   cb: ContentTypeCallback
 ) {
   file.stream.once("data", async function (firstChunk: Buffer) {
+    const { fileTypeFromBuffer } = await import("file-type"); // Support commonjs....
+
     var type = await fileTypeFromBuffer(firstChunk);
     var mime = "application/octet-stream"; // default type
 

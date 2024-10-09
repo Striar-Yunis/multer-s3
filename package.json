@@ -10,6 +10,8 @@
   },
   "description": "Streaming multer storage engine for AWS S3",
   "devDependencies": {
+    "@babel/cli": "^7.25.7",
+    "@babel/preset-env": "^7.25.7",
     "@types/express": "^5.0.0",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.7.5",
@@ -20,6 +22,10 @@
   "engines": {
     "node": ">= 12.0.0"
   },
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
+  },
   "files": [
     "dist/**/*"
   ],
@@ -29,7 +35,8 @@
     "s3"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "name": "multer-s3-extended",
   "peerDependencies": {
     "@aws-sdk/client-s3": "^3.0.0"
@@ -39,9 +46,10 @@
     "url": "git+https://github.com/Striar-Yunis/multer-s3.git"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && npx babel dist/index.js --out-file dist/index.cjs",
+    "publish": "npm run build && npm publish"
   },
   "type": "module",
   "types": "dist/index.d.ts",
-  "version": "1.0.1"
+  "version": "1.0.5"
 }
