@@ -258,7 +258,7 @@ class S3Storage {
   async _removeFile(
     req: Express.Request,
     file: Express.Multer.File & { bucket: string; key: string },
-    cb: (error?: Error) => void
+    cb: (error: Error | null) => void
   ) {
     try {
       this.s3.send(
@@ -267,7 +267,7 @@ class S3Storage {
           Key: file.key,
         })
       );
-      cb();
+      cb(null);
     } catch (error: any) {
       cb(error);
     }

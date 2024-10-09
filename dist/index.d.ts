@@ -15,10 +15,12 @@ export interface S3StorageOptions {
     metadata?: Option<{
         [key: string]: string;
     }>;
+    partSize?: Option<number>;
     serverSideEncryption?: Option<ServerSideEncryption>;
     sseKmsKeyId?: Option<string>;
     storageClass?: Option<StorageClass>;
     s3: S3Client;
+    tagging?: Option<string>;
 }
 declare class S3Storage {
     getAcl: OptionAwaitable<ObjectCannedACL>;
@@ -31,10 +33,12 @@ declare class S3Storage {
     getMetadata: OptionAwaitable<{
         [key: string]: string;
     } | undefined>;
+    getPartSize: OptionAwaitable<number | undefined>;
     getServerSideEncryption: OptionAwaitable<ServerSideEncryption | undefined>;
     getSseKmsKeyId: OptionAwaitable<string | undefined>;
     getStorageClass: OptionAwaitable<StorageClass | undefined>;
     s3: S3Client;
+    getTagging: OptionAwaitable<string | undefined>;
     constructor(opts: S3StorageOptions);
     private standardizeOptions;
     private collect;
@@ -57,11 +61,11 @@ declare class S3Storage {
     _removeFile(req: Express.Request, file: Express.Multer.File & {
         bucket: string;
         key: string;
-    }, cb: (error?: Error) => void): Promise<void>;
+    }, cb: (error: Error | null) => void): Promise<void>;
 }
 export default function (opts: S3StorageOptions): S3Storage;
 type ContentTypeCallback = (error: Error | null, mime: string, replacementStream: Readable) => void;
 declare function autoContentType(req: Express.Request, file: Express.Multer.File, cb: ContentTypeCallback): void;
 export declare const AUTO_CONTENT_TYPE: typeof autoContentType;
-export declare const DEFAULT_CONTENT_TYPE: (req: Express.Request, file: Express.Multer.File, cb: Callback<any>) => void;
+export declare const DEFAULT_CONTENT_TYPE: (_: Express.Request, __: Express.Multer.File, cb: Callback<any>) => void;
 export {};

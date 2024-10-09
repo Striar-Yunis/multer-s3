@@ -31,7 +31,6 @@ function defaultKey(_, __) {
 }
 class S3Storage {
     constructor(opts) {
-        this.s3 = opts.s3;
         this.getAcl = this.standardizeOptions(opts.acl || "private");
         this.getBucket = this.standardizeOptions(opts.bucket);
         this.getCacheControl = this.standardizeOptions(opts.cacheControl || undefined);
@@ -40,9 +39,12 @@ class S3Storage {
         this.getContentType = this.standardizeOptions(opts.contentType || defaultContentType);
         this.getKey = this.standardizeOptions(opts.key || defaultKey);
         this.getMetadata = this.standardizeOptions(opts.metadata || undefined);
+        this.getPartSize = this.standardizeOptions(opts.partSize || undefined);
         this.getServerSideEncryption = this.standardizeOptions(opts.serverSideEncryption || undefined);
         this.getSseKmsKeyId = this.standardizeOptions(opts.sseKmsKeyId || undefined);
         this.getStorageClass = this.standardizeOptions(opts.storageClass || "STANDARD");
+        this.getTagging = this.standardizeOptions(opts.tagging || undefined);
+        this.s3 = opts.s3;
     }
     // Convert all option types to a standard async function
     standardizeOptions(option) {
@@ -81,7 +83,7 @@ class S3Storage {
     collect(req, file) {
         return __awaiter(this, void 0, void 0, function* () {
             // Start all the option retrievals concurrently
-            const [acl, bucket, cacheControl, contentDisposition, contentEncoding, contentType, key, metadata, serverSideEncryption, sseKmsKeyId, storageClass,] = yield Promise.all([
+            const [acl, bucket, cacheControl, contentDisposition, contentEncoding, contentType, key, metadata, partSize, serverSideEncryption, sseKmsKeyId, storageClass, tagging,] = yield Promise.all([
                 this.getAcl(req, file),
                 this.getBucket(req, file),
                 this.getCacheControl(req, file),
@@ -90,9 +92,11 @@ class S3Storage {
                 this.getContentType(req, file),
                 this.getKey(req, file),
                 this.getMetadata(req, file),
+                this.getPartSize(req, file),
                 this.getServerSideEncryption(req, file),
                 this.getSseKmsKeyId(req, file),
                 this.getStorageClass(req, file),
+                this.getTagging(req, file),
             ]);
             // Return an object containing all the collected options
             return {
@@ -104,9 +108,11 @@ class S3Storage {
                 contentType,
                 key,
                 metadata,
+                partSize,
                 serverSideEncryption,
                 sseKmsKeyId,
                 storageClass,
+                tagging,
             };
         });
     }
@@ -117,21 +123,23 @@ class S3Storage {
                 // Build the S3 upload parameters
                 const params = {
                     ACL: opts.acl,
+                    Body: file.stream,
                     Bucket: opts.bucket,
-                    Key: opts.key,
                     CacheControl: opts.cacheControl,
                     ContentDisposition: opts.contentDisposition,
                     ContentEncoding: opts.contentEncoding,
                     ContentType: opts.contentType,
+                    Key: opts.key,
                     Metadata: opts.metadata,
                     ServerSideEncryption: opts.serverSideEncryption,
                     SSEKMSKeyId: opts.sseKmsKeyId,
                     StorageClass: opts.storageClass,
-                    Body: file.stream,
+                    Tagging: opts.tagging,
                 };
                 const upload = new lib_storage_1.Upload({
                     client: this.s3,
                     params,
+                    partSize: opts.partSize,
                 });
                 let currentSize = 0;
                 upload.on("httpUploadProgress", function (ev) {
@@ -167,7 +175,7 @@ class S3Storage {
                     Bucket: file.bucket,
                     Key: file.key,
                 }));
-                cb();
+                cb(null);
             }
             catch (error) {
                 cb(error);
@@ -178,9 +186,9 @@ class S3Storage {
 function default_1(opts) {
     return new S3Storage(opts);
 }
-// Maintain compatibility with the original module
+// Maintain compatibility with the original module -------------------------------------------------------------------------------
 function staticValue(value) {
-    return function (req, file, cb) {
+    return function (_, __, cb) {
         cb(null, value);
     };
 }
