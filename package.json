@@ -1,46 +1,44 @@
 {
-  "name": "multer-s3",
-  "version": "3.0.1",
+  "name": "multer-s3-extended",
+  "version": "4.0.0",
   "description": "Streaming multer storage engine for AWS S3",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "standard && mocha test/basic.js"
+    "build": "tsc"
   },
   "engines": {
     "node": ">= 12.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/badunk/multer-s3.git"
+    "url": "git+https://github.com/Striar-Yunis/multer-s3.git"
   },
   "keywords": [
     "multer",
-    "s3",
-    "amazon",
-    "aws"
+    "s3"
   ],
-  "author": "badunk",
+  "author": "Striar Yunis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/badunk/multer-s3/issues"
+    "url": "https://github.com/Striar-Yunis/multer-s3/issues"
   },
-  "homepage": "https://github.com/badunk/multer-s3#readme",
+  "homepage": "https://github.com/Striar-Yunis/multer-s3/multer-s3#readme",
   "dependencies": {
-    "@aws-sdk/lib-storage": "^3.46.0",
-    "file-type": "^3.3.0",
+    "@aws-sdk/lib-storage": "^3.667.0",
+    "file-type": "^19.5.0",
     "html-comment-regex": "^1.1.2",
-    "run-parallel": "^1.1.6"
+    "run-parallel": "^1.2.0"
   },
   "peerDependencies": {
     "@aws-sdk/client-s3": "^3.0.0"
   },
   "devDependencies": {
-    "express": "^4.13.1",
-    "form-data": "^1.0.0-rc3",
-    "mocha": "^2.2.5",
-    "multer": "^1.1.0",
-    "on-finished": "^2.3.0",
-    "standard": "^5.4.1",
-    "xtend": "^4.0.1"
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.7.5",
+    "express": "^4.21.1",
+    "multer": "^1.4.5-lts.1",
+    "typescript": "^5.6.2"
   }
 }
